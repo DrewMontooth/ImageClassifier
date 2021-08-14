@@ -1,11 +1,8 @@
 import itertools
 
-import cv2
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy.signal import convolve
-
-from image import IMAGE
 
 ARRAY_NUMBER = 1
 
@@ -313,7 +310,7 @@ class Classifier:
         image : array_like or list
             The image that has the object
         condition : lambda function
-            A condition that will determine the restraint
+            A condition that will determine whether or not a pixel is classified as having nothing inside it.
         """
         if condition == "mean":
             MEAN = np.mean([sum(x)/len(x) for x in zip(*image)])
@@ -333,7 +330,6 @@ class Classifier:
     
     def find_and_classify(self, image, original_image, classes, actual_class=None):
         # find more above average or below average
-        print(image)
         class_ = self.classify(image, self.classes, actual_class=actual_class)
         plt.imshow(self.find_object_position(original_image, "mean"))
         plt.title(class_)
@@ -455,54 +451,3 @@ classifier.classify(new_image5, actual_class="square")
 classifier.classify(new_image7, actual_class="circle")
 classifier.classify(new_image8, actual_class="circle")
 classifier.classify(new_image9, actual_class="square")
-
-
-
-## Now for the real testing
-
-car_img = cv2.imread("CNN/image_classifier/test_image.jpg", cv2.IMREAD_GRAYSCALE)
-car = car_img/255
-
-car2_img = cv2.imread("CNN/Train/cars/2Q__ (2).jpg", cv2.IMREAD_GRAYSCALE)
-car_2 = car2_img/255
-
-face_img = cv2.imread("CNN/image_classifier/face.jpg", cv2.IMREAD_GRAYSCALE)
-face = face_img/255
-
-test_face = cv2.imread("CNN/image_classifier/face3.jpg", cv2.IMREAD_GRAYSCALE)
-face2 = test_face/255
-
-test = cv2.imread("CNN/image_classifier/test2.jpg", cv2.IMREAD_GRAYSCALE)
-test_img = test/255
-
-test2 = cv2.imread("CNN/Train/cars/9k_ (4).jpg", cv2.IMREAD_GRAYSCALE)
-test2_img = test2/255
-
-face_male = cv2.imread("CNN/image_classifier/face4.jpg", cv2.IMREAD_GRAYSCALE)
-male = face_male/255
-
-face_male2 = cv2.imread("CNN/image_classifier/face5.jpg", cv2.IMREAD_GRAYSCALE)
-male2 = face_male2/255
-
-
-image_classifier = Classifier(car, name="car")
-car2 = image_classifier.convolve(car_2, name="car2")
-new_face = image_classifier.convolve(face, name="face")
-other_face = image_classifier.convolve(face, name="NEW_FACE")
-male_face = image_classifier.convolve(male, name="man face")
-
-new_car = image_classifier.inception_convolve(2, image_classifier.image, name="new_car")
-test_image = image_classifier.inception_convolve(2, test_img, name="CAR")
-test_image2 = image_classifier.inception_convolve(2, test2_img, name="CAR2")
-test_image3 = image_classifier.inception_convolve(2, face_male2, name="guy face")
-
-image_classifier.classify(new_car, {"car": [car2], "face": [new_face, male_face]}, "car")
-# image_classifier.classify(other_face, actual_class="face")
-# image_classifier.classify(test_image3, actual_class="face")
-# image_classifier.classify(test_image, actual_class="car")
-# image_classifier.classify(test_image2, actual_class="car")
-
-image_classifier.find_and_classify(new_car, image_classifier.image, {"car": [car2], "face": [new_face, male_face]}, "car")
-
-# IDEA FOR APP
-# MAKE GUI WHERE USER DRAWS AND AI TRIES TO GUESS IT
